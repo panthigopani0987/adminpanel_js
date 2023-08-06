@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+        <meta name="author" content="AdminKit">
+        <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+        <link rel="canonical" href="https://demo-basic.adminkit.io/" />
+        <title>AdminKit - Product</title>
+        <link href="css/app.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+        <style>
+            img.card-img-top {
+                width: 300px;
+                height: 200px;
+                object-fit: cover;
+            }
+            .logo img{
+                width: 150px;
+            }
+            table,tr,td,th{
+                border: 1px solid #000;
+                border-collapse: collapse;
+                text-align: center;
+                padding: 10px;
+            }
+            table img{
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+            }
+            input.qty
+            {
+                width: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+           <div class="logo">
+            <a href="dashboard.html">
+                <img src="./img/icons/logo.png" alt="logo">
+            </a>
+           </div>
+            <div class="navbar-collapse collapse">
+                <ul class="navbar-nav navbar-align">
+                    <li class="nav-item">
+                        <a class="nav-icon" href="cart.html">
+                            <div class="position-relative">
+                                <i class="align-middle" data-feather="shopping-cart"></i>
+                                <span class="indicator" id="count">4</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
+                            data-bs-toggle="dropdown">
+                            <i class="align-middle" data-feather="settings"></i>
+                        </a>
+
+                        <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
+                            data-bs-toggle="dropdown">
+                            <img src="img/avatars/avatar-3.jpg" class="avatar img-fluid rounded me-1"
+                                alt="Charles Hall" />
+                            <span class="text-dark" id="profile"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="profileChange.html"><i class="align-middle me-1"
+                                    data-feather="user"></i> Profile</a>
+                            <a class="dropdown-item" href="#"><i class="align-middle me-1"
+                                    data-feather="pie-chart"></i> Analytics</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="index.html"><i class="align-middle me-1"
+                                    data-feather="settings"></i> Settings & Privacy</a>
+                            <a class="dropdown-item" href="#"><i class="align-middle me-1"
+                                    data-feather="help-circle"></i> Help Center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" onclick="logOut()">Log out</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-icon" href="index.html">
+                            <div class="position-relative">
+                                <button type="button" class="btn btn-lg btn-primary">Back To Cart</button>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <section class="product mt-5">
+            <div class="container">
+                <div class="row">
+                    <table>
+                        <tr>
+                            <th>Product Id</th>
+                            <th>Product Name</th>
+                            <th>Product img</th>
+                            <th>Product Price</th>
+                            <th>Product qty</th>
+                            <th>Product description</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                        <tbody id="record">
+                            
+                        </tbody>
+                        <tr>
+                            <td colspan="8">
+                                <h3 id="subTotal" style="text-align: right; font-weight: 600;"></h3>
+                            </td>
+                        </tr>
+                    </table>                   
+                </div>
+            </div>
+        </section>
+    </body>
+	<script src="js/app.js"></script>
+    <script type="text/javascript">
+
+        function logOut()
+        {
+            localStorage.removeItem('UserLogin');
+            window.location.href = "login.html";
+        }
+		let profile = JSON.parse(localStorage.getItem('UserLogin'));
+		document.getElementById('profile').innerHTML = profile.gName;
+        //add to cart
+        function viewData()
+        {
+            let val = JSON.parse(localStorage.getItem('cart')) ? JSON.parse(localStorage.getItem('cart')) : [];
+            let tbl = "";
+            let allTotal = 0;
+            val.map((value) => {
+                let total = value.price * value.qty;
+                allTotal  = allTotal + total;
+                tbl += `
+                    <tr>
+                        <td>${value.id}</td>
+                        <td>${value.name}</td>
+                        <td><img src="${value.img}" alt="${value.img}"></td>
+                        <td>${value.price}</td>
+                        <td><input type="text" value="${value.qty}" class="qty" id="qty_${value.id}"></td>
+                        <td>${value.detail}</td>
+                        <td>${total}</td>
+                        <td>
+                            <button type="button" class="btn btn-lg btn-primary" onclick="editProdcut(${value.id})">Edit</button>
+                            <button type="button" class="btn btn-lg btn-primary" onclick="deletePro(${value.id})">Remove</button>
+                        </td>
+                    </tr>
+                `
+            })
+            document.getElementById('record').innerHTML = tbl;
+            document.getElementById('subTotal').innerHTML = "Total = " + allTotal + "/- rs"
+        }
+        viewData();
+        function deletePro(id)
+        {
+            let delet = JSON.parse(localStorage.getItem('cart'));
+            let ans = delet.filter((cartp) => {
+                return cartp.id != id;
+            })
+            localStorage.setItem('cart',JSON.stringify(ans));
+            alert('Add to cart Delete');
+            viewData();
+        }
+        function editProdcut(id)
+        {
+            let qty = document.getElementById('qty_'+id).value;
+            let val = JSON.parse(localStorage.getItem('cart'));
+            for(let i in val)
+            {
+                if(val[i].id == id)
+                {
+                    val[i].qty = qty;
+                }
+            }
+            localStorage.setItem('cart',JSON.stringify(val));
+            alert('Cart Successfully Update');
+            viewData();
+        }
+    </script>
+
+</html>
